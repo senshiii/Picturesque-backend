@@ -16,17 +16,10 @@ const imgSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    size: {
-      type: "String",
+    size:{
+      type: Number,
+      default: 0
     },
-    // likes: {
-    // 	type: Number,
-    // 	default: 0
-    // },
-    // downloads: {
-    // 	type: Number,
-    // 	default: 0
-    // },
     tags: {
       type: Array,
       default: [],

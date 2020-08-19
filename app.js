@@ -13,14 +13,13 @@ mongoose.connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 // ALLOW CORS
-app.use((req, res, next) => {
-    console.log('reached')
+app.use('*', (req, res, next) => {
     res.set('Access-Control-Allow-Origin', '*');
     res.set('Access-Control-Allow-Headers', '*');
     if(req.method === 'OPTIONS')
         res.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
     next();
-}); 
+});
 
 // Backend Routes
 

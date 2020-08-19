@@ -17,6 +17,14 @@ const userSchema = mongoose.Schema(
 		password: {
 			type: String
 		},
+		storage: {
+			type: Number,
+			default: 0
+		},
+		socials: {
+			type: Array,
+			default: []
+		},
 		images: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
