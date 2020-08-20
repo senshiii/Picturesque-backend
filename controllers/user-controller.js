@@ -3,12 +3,13 @@ const Image = require('../models/Images');
 
 exports.addImage = (req, res) => {
 	if (req.params.userId !== req.userId) return res.status(403).json({ message: 'Unauthorized' });
-	const { url, access, size } = req.body;
+	const { url, access, size, tags } = req.body;
 	Image.create({
 		dataUrl: url,
 		owner: req.userId,
 		access,
-		size
+		size,
+		tags: tags.split('#').filter(el => el.length > 0).slice(0,5)
 	})
 		.then((img) => {
 			User.findById(req.userId)
@@ -35,10 +36,9 @@ exports.addImage = (req, res) => {
 };
 
 exports.getProfileInfo = (req, res) => {
-	console.log('Profile ID:', req.params.userId);
 	User.findById(req.params.userId)
 		.select('-password -createdAt -updatedAt -__v')
-		.populate('images')
+		.populate('images', '-updatedAt -__v')
 		.then((user) => res.json(user))
 		.catch((err) => {
 			console.log(err);

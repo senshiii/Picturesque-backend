@@ -13,8 +13,9 @@ mongoose.connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 // ALLOW CORS
-app.use('*', (req, res, next) => {
-    res.set('Access-Control-Allow-Origin', '*');
+app.use((req, res, next) => {
+    console.log('Setting Cors Headers');
+    res.set('Access-Control-Allow-Origin', 'http://localhost:3000');
     res.set('Access-Control-Allow-Headers', '*');
     if(req.method === 'OPTIONS')
         res.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
@@ -27,7 +28,7 @@ app.use('/auth', require('./routes/auth-routes'));
 
 app.use('/user', require('./routes/user-routes'));
 
-app.use('/image', require('./routes/image-routes'));
+app.use('/images', require('./routes/image-routes'));
 
 // Api routes
 const PORT = process.env.PORT || 8080;
