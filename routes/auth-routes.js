@@ -2,8 +2,12 @@ const router = require('express').Router();
 
 const { registerUser, loginUser } = require('../controllers/auth-controller');
 
-router.post('/register', registerUser);
+const { sanitize } = require('../middlewares/sanitize.middleware');
 
-router.post('/login', loginUser);
+// REGISTER USER
+router.post('/register', [ sanitize ], registerUser);
+
+// LOGIN USER
+router.post('/login', [ sanitize ], loginUser);
 
 module.exports = router;

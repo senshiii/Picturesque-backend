@@ -1,8 +1,76 @@
 const User = require('../models/User');
 const Image = require('../models/Images');
 
+// GET PROFILE INFO
+exports.getProfileInfo = (req, res) => {
+	User.findById(req.params.userId)
+		.select('-password -updatedAt -createdAt -__v -storage')
+		.populate({
+			path: 'images',
+			populate: {
+				path: 'owner',
+				select: 'dpUrl id'
+			},
+			match: { access: 'public' }
+		})
+		.exec()
+		.then((user) => {
+			// console.log('Profile', user);
+			res.json(user);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+};
+
+// GET LOGGED IN USER PROFILE INFO
+exports.getMyProfileInfo = (req, res) => {
+	User.findById(req.userId)
+		.select('-password -createdAt -updatedAt -__v')
+		.populate('images', '-updatedAt -__v')
+		.then((user) => {
+			// console.log('Profile: ', user);
+			res.status(200).json(user);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+};
+
+// UPDATE PROFILE INFO
+exports.updateProfile = (req, res) => {
+	if (req.params.userId != req.userId)
+		return res.status(403).json({ message: 'You do not have permission for this action' });
+	const body = req.body;
+	User.findById(req.params.userId)
+		.select('-password -updatedAt -createdAt -__v')
+		.exec()
+		.then((foundUser) => {
+			for (let key of Object.keys(body)) {
+				if (key in foundUser) {
+					foundUser[key] = body[key];
+				}
+			}
+			foundUser
+				.save()
+				.then((updatedUser) => {
+					updatedUser.populate('images').execPopulate().then((user) => {
+						// console.log(user);
+						res.status(200).json(user);
+					});
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+};
+
+// ADD IMAGE
 exports.addImage = (req, res) => {
-	if (req.params.userId !== req.userId) return res.status(403).json({ message: 'Unauthorized' });
+	if (req.params.userId != req.userId) return res.status(403).json({ message: 'Unauthorized' });
 	const { url, access, size, tags, name } = req.body;
 	Image.create({
 		dataUrl: url,
@@ -20,7 +88,6 @@ exports.addImage = (req, res) => {
 					user
 						.save()
 						.then((user) => {
-							// TODO: Decide what to do after image uload;
 							res.json({ upload: img, storage: user.storage });
 						})
 						.catch((err) => {
@@ -36,34 +103,10 @@ exports.addImage = (req, res) => {
 		});
 };
 
-exports.getMyProfileInfo = (req, res) => {
-	User.findById(req.userId)
-		.select('-password -createdAt -updatedAt -__v')
-		.populate('images', '-updatedAt -__v')
-		.then((user) => res.json(user))
-		.catch((err) => {
-			console.log(err);
-		});
-};
-
-exports.getProfileInfo = (req, res) => {
-	User.findById(req.params.userId)
-		.select('-password -updatedAt -createdAt -__v -storage')
-		.populate({
-			path: 'images',
-			match: { access: 'public' }
-		})
-		.exec()
-		.then((user) => {
-			// console.log('Profile', user);
-			res.json(user);
-		})
-		.catch((err) => {
-			console.log(err);
-		});
-};
-
+// DELETE IMAGE
 exports.deleteImg = (req, res) => {
+	if (req.params.userId != req.userId)
+		return res.status(403).json({ message: 'You do not have permission for this action' });
 	const { userId, imgId } = req.params;
 	Image.findByIdAndDelete(imgId)
 		.then((delImg) => {
@@ -79,4 +122,20 @@ exports.deleteImg = (req, res) => {
 			});
 		})
 		.catch((err) => console.log(err));
+};
+
+// DELETE PROFILE
+exports.deleteProfile = (req, res) => {
+	if (req.params.userId != req.userId)
+		return res.status(403).json({ message: 'You do not have permission for this action' });
+	User.findById(req.params.userId)
+		.then(async (user) => {
+			for (let img of user.images) {
+				await Image.findByIdAndDelete(img);
+			}
+			user.remove().then(() => res.sendStatus(200)).catch((err) => console.log(err));
+		})
+		.catch((err) => {
+			console.log(err);
+		});
 };

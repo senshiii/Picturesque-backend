@@ -3,7 +3,7 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 
 exports.registerUser = (req, res) => {
-	const { name, email, password, bio } = req.body;
+	const { name, email, password } = req.body;
 	console.log(req.body);
 	User.findOne({ email }).then((user) => {
 		if (user) return res.status(400).json({ message: 'User with given email already exists' });

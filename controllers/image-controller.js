@@ -1,10 +1,9 @@
 const Image = require('../models/Images');
-const User = require('../models/User');
 
+// GET ALL IMAGES, BY TAGS OR ALL IMAGES
 exports.getAllImages = (req, res) => {
 	const { tag } = req.query;
 	Image.find({ access: 'public' })
-		.where('')
 		.select('dataUrl tags')
 		.populate('owner', 'name id dpUrl')
 		.sort({ createdAt: -1 })

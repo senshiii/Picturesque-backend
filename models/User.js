@@ -10,9 +10,15 @@ const userSchema = mongoose.Schema(
 		},
 		bio: {
 			type: String,
+			default: ''
 		},
 		dpUrl:{
-			type: String
+			type: String,
+			default: ''
+		},
+		dpFile:{
+			type: String,
+			default: ''
 		},
 		password: {
 			type: String

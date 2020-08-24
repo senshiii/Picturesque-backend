@@ -9,6 +9,7 @@
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.27",
+    "sanitize-html": "^1.27.3",
     "tinyurl": "^1.1.7"
   },
   "devDependencies": {},
