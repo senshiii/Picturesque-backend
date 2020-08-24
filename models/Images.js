@@ -5,12 +5,18 @@ const imgSchema = mongoose.Schema(
     dataUrl: {
       type: String,
     },
+<<<<<<< HEAD
     src: {
       type: String,
     },
     name: {
       type: String
     },
+=======
+    shortUrl: {
+      type: String,
+    },
+>>>>>>> 38c46747fd785cc93ebe81a2762e733ca08cf88d
     access: {
       type: String,
       default: "public",

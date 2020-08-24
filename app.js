@@ -14,6 +14,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 // ALLOW CORS
 app.use((req, res, next) => {
+<<<<<<< HEAD
+=======
+    console.log('Setting Cors Headers');
+>>>>>>> 38c46747fd785cc93ebe81a2762e733ca08cf88d
     res.set('Access-Control-Allow-Origin', 'http://localhost:3000');
     res.set('Access-Control-Allow-Headers', '*');
     if(req.method === 'OPTIONS')
